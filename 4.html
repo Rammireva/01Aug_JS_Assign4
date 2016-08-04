@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geo Location</title>
+    <style type="text/css">
+        body{
+            text-align: center;
+        }
+        #geo{
+            background-color: black;
+            color: white;
+            border-radius: 14%;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<input type="submit" name="geo" value="Get my GEO Location" id="geo"><br />
+<address id="address"></address>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="application/javascript">
+    $('#geo').click(function(e){
+        var geolocation = navigator.geolocation;
+        geolocation.getCurrentPosition(showLocation, errorHandler);
+        function showLocation(pos){
+            var lat = pos.coords.latitude;
+            var long = pos.coords.longitude;
+            $.get("http://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+long+"&sensor=true",function(data, status){
+                var res = data.results;
+                for(address in res){
+                    document.getElementById('address').innerHTML += res[address]['formatted_address']+'<br>';
+                }
+            })
+        }
+        function errorHandler(err){
+            if(err.code == 0){
+                document.getElementById('address').innerHTML = 'Unknown Error';
+            }else if(err.code == 1){
+                document.getElementById('address').innerHTML = 'Permision Denied';
+            }else if(err.code == 2){
+                document.getElementById('address').innerHTML = 'Position Unavailable';
+            }else if(err.code == 3){
+                document.getElementById('address').innerHTML = 'Time out';
+            }
+        }
+    })
+</script>
+</html>
